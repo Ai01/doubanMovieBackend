@@ -1,0 +1,18 @@
+extends layout.pug
+
+block styles
+    include movie.css
+
+block content
+    ul.moviesContainer
+        each val in moviesData
+            li
+                div.movieContainer
+                    img.movieImg(src=val.picUrl)
+                    div.movieInfo
+                        div 名称:
+                            a(href=val.link)=val.title
+                        div 评分:
+                            span=val.start
+
+
