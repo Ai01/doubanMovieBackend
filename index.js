@@ -30,7 +30,6 @@ app.use(async ctx => {
     .find()
     .sort({ start: -1 })
     .toArray();
-  console.log(moviesData);
   await ctx.render('movies', {
     moviesData,
   });

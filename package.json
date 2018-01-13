@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon ./index.js"
   },
   "author": "",
   "license": "ISC",
@@ -13,5 +13,8 @@
     "koa-mongo": "^1.3.0",
     "koa-views": "^6.1.3",
     "pug": "^2.0.0-rc.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.11"
   }
 }
