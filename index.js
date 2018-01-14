@@ -1,6 +1,7 @@
 const Koa = require('koa');
 const mongo = require('koa-mongo');
 const cors = require('@koa/cors');
+const route = require('koa-route');
 
 const { mongodbConfig } = require('./src/configs/mongodbConfig');
 
@@ -16,9 +17,8 @@ app.use(
   }),
 );
 
-app.use(async ctx => {
-  const path = ctx.path;
-  if (path === '/allMovies') {
+app.use(
+  route.get('/allMovies', async ctx => {
     const query = ctx.query;
 
     const { page, pageSize } = query;
@@ -43,8 +43,8 @@ app.use(async ctx => {
       moviesTotalAmount,
       moviesData,
     };
-  }
-});
+  }),
+);
 
 app.on('error', err => {
   console.error(err);
