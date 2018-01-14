@@ -1,6 +1,6 @@
 const Koa = require('koa');
 const mongo = require('koa-mongo');
-const views = require('koa-views');
+const cors = require('@koa/cors');
 
 const { mongodbConfig } = require('./src/configs/mongodbConfig');
 
@@ -8,31 +8,46 @@ const app = new Koa();
 
 const port = 8110;
 
+app.use(cors());
+
 app.use(
   mongo({
     ...mongodbConfig,
   }),
 );
 
-app.use(
-  views(__dirname + '/src/views', {
-    extension: 'pug',
-    map: {
-      pug: 'pug',
-    },
-  }),
-);
-
 app.use(async ctx => {
-  const moviesData = await ctx.mongo
-    .db('doubanMovies')
-    .collection('movies')
-    .find()
-    .sort({ start: -1 })
-    .toArray();
-  await ctx.render('movies', {
-    moviesData,
-  });
+  const path = ctx.path;
+  if (path === '/allMovies') {
+    const query = ctx.query;
+
+    const { page, pageSize } = query;
+
+    const limitAmount = pageSize || 10;
+    const skipAmount = (page - 1) * limitAmount || 0;
+
+    const moviesData = await ctx.mongo
+      .db('doubanMovies')
+      .collection('movies')
+      .find()
+      .skip(skipAmount)
+      .limit(limitAmount)
+      .sort({ start: -1 })
+      .toArray();
+    const moviesTotalAmount = await ctx.mongo
+      .db('doubanMovies')
+      .collection('movies')
+      .count();
+
+    ctx.body = {
+      moviesTotalAmount,
+      moviesData,
+    };
+  }
+});
+
+app.on('error', err => {
+  console.error(err);
 });
 
 app.listen(port, () => {
